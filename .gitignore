@@ -1,0 +1,23 @@
+# Secrets
+*.key
+.env
+.env.*
+!*.env.example
+
+# Server runtime data
+backups/
+worlds/
+addon_archives/
+packs/
+state/
+logs/
+*.tar.zst
+*.zip
+*.mcaddon
+*.mcpack
+
+# Local/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
