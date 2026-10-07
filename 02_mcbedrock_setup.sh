@@ -397,7 +397,7 @@ install_bds_release(){
   if [[ ! -x "$d/bedrock_server" ]]; then
     tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' RETURN
     log "Download BDS $ver"
-    curl -fL --retry 3 --connect-timeout 20 -o "$tmp/bds.zip" "$url"
+    curl --http1.1 -fL --retry 3 --retry-all-errors --connect-timeout 20 -o "$tmp/bds.zip" "$url"
     unzip -q "$tmp/bds.zip" -d "$tmp/extract"
     mkdir -p "$d"; rsync -a "$tmp/extract/" "$d/"
     chmod 0755 "$d/bedrock_server"
