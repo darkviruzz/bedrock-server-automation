@@ -998,3 +998,28 @@ Lokaler Upload-Dienst (NICHT am Router ins Internet weiterleiten):
 Nützliche Befehle:
   mc-bedrock-status
   mc-bedrock-test
+  mc-bedrock-backup
+  mc-bedrock-update-bds
+  mc-bedrock-update-addons          # Release-Metadaten prüfen + ggf. Gotify
+  mc-bedrock-set-curseforge-key     # API-Key später hinterlegen/ersetzen
+  mc-bedrock-upload-info            # Upload-URL/Token + offene Downloads anzeigen
+  mc-bedrock-allowlist list
+  mc-bedrock-allowlist add "Gamertag"
+  mc-bedrock-allowlist remove "Gamertag"
+  journalctl -u minecraft-bedrock -f
+
+Timer:
+  systemctl list-timers 'mc-bedrock-*'
+
+Add-on-Workflow:
+  1. Gotify meldet einen neuen Release (soweit CurseForge ihn per API sichtbar macht).
+  2. Link öffnen und Datei normal auf CurseForge herunterladen.
+  3. Auf macOS/Linux: ./client/upload-addon.sh SLUG DATEI
+     Auf Windows:     .\client\upload-addon.ps1 -Slug SLUG -File DATEI
+  4. Ab hier läuft alles automatisch auf dem CT.
+
+Auf dem iPad: Minecraft -> Spielen -> Server -> Server hinzufügen,
+Adresse ${IP4:-<CT-IP>}, Port $PORT4.
+Im gleichen LAN ist sonst nichts nötig. Für Internetzugriff muss am Router
+UDP $PORT4 auf ${IP4:-die CT-IP} weitergeleitet werden.
+EOF
