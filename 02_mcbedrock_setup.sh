@@ -392,7 +392,8 @@ release_link_persistent(){
   chown -R root:root "$d/behavior_packs" "$d/resource_packs"; chmod -R a+rX "$d/behavior_packs" "$d/resource_packs"
 }
 install_bds_release(){
-  local url="$1" ver="$2" d="$RELEASES/$ver" tmp
+  local url="$1" ver="$2" d tmp
+  d="$RELEASES/$ver"
   if [[ ! -x "$d/bedrock_server" ]]; then
     tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' RETURN
     log "Download BDS $ver"
