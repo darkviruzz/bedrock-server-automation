@@ -961,7 +961,7 @@ curl -fsS "http://127.0.0.1:$UPLOAD_PORT/health" >/dev/null || die "Lokaler Add-
 /usr/local/sbin/mc-bedrock-update-addons || true
 if [[ -s "$STATE/pending-updates.json" ]] && [[ "$(jq 'length' "$STATE/pending-updates.json")" -gt 0 ]]; then
   links="$(jq -r '.[] | "- [\(.name)](\(.downloadPage // .projectUrl)) — Slug: `\(.slug)`"' "$STATE/pending-updates.json")"
-  notify_throttled "initial-addon-onboarding" 3650 "Minecraft Add-ons: Download erforderlich" "Die gewünschten Add-ons werden über CurseForge im Browser geladen.\n\n$links\n\nNach jedem Download den lokalen `client/upload-addon`-Helper verwenden; der CT erledigt danach Installation und Test automatisch." 6
+  notify_throttled "initial-addon-onboarding" 3650 "Minecraft Add-ons: Download erforderlich" "Die gewünschten Add-ons werden über CurseForge im Browser geladen.\n\n$links\n\nNach jedem Download den lokalen \`client/upload-addon\`-Helper verwenden; der CT erledigt danach Installation und Test automatisch." 6
 fi
 
 # Confirm pack stack files are valid and all extracted UUIDs are represented.
