@@ -737,7 +737,7 @@ printf 'Service:     %s\n' "$(systemctl is-active minecraft-bedrock.service || t
 printf 'IP(s):       %s\n' "$(hostname -I 2>/dev/null || true)"
 printf 'UDP port:    %s\n' "$PORT4"
 echo 'Installierte Add-ons:'
-jq -r '.[] | "  - \(.name): CurseForge file \(.fileId // \"manuell/unbekannt\")"' "$BASE/addon-lock.json"
+jq -r '.[] | "  - \(.name): CurseForge file \(.fileId // "manuell/unbekannt")"' "$BASE/addon-lock.json"
 echo 'Offene manuelle Aktionen:'
 if [[ -f "$STATE/pending-updates.json" ]]; then jq -r '.[] | "  - \(.name): \(.downloadPage // .projectUrl)"' "$STATE/pending-updates.json"; else echo '  - keine'; fi
 echo 'Active pack manifests:'
