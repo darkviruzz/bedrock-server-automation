@@ -477,7 +477,12 @@ for ((i=0;i<wait_s;i++)); do
   sleep 1
 done
 ss -lntup 2>/dev/null | grep -Eq ":${PORT4}([[:space:]]|$)" || { echo "Gameplay-Port $PORT4 lauscht nicht." >&2; journalctl -u minecraft-bedrock.service -n 100 --no-pager >&2; exit 1; }
-logs="$(journalctl -u minecraft-bedrock.service --since '-3 minutes' --no-pager 2>/dev/null || true)"
+invocation="$(systemctl show -p InvocationID --value minecraft-bedrock.service 2>/dev/null || true)"
+if [[ -n "$invocation" ]]; then
+  logs="$(journalctl _SYSTEMD_INVOCATION_ID="$invocation" --no-pager 2>/dev/null || true)"
+else
+  logs="$(journalctl -u minecraft-bedrock.service --since '-3 minutes' --no-pager 2>/dev/null || true)"
+fi
 if grep -Eqi '(configured pack.*not found|unable to load.*pack|failed to load.*pack|requires a newer version|syntaxerror|unhandledpromiserejection|resourceprocessingerror|transport type error|players will not be able to connect|fatal error|server shutdown unexpectedly)' <<<"$logs"; then
   echo "Fatales Add-on/BDS-Muster im aktuellen Journal gefunden:" >&2
   grep -Ei '(configured pack.*not found|unable to load.*pack|failed to load.*pack|requires a newer version|syntaxerror|unhandledpromiserejection|resourceprocessingerror|transport type error|players will not be able to connect|fatal error|server shutdown unexpectedly)' <<<"$logs" >&2 || true
