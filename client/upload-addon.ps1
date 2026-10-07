@@ -76,6 +76,31 @@ if (-not $File) {
 }
 $File = (Resolve-Path -LiteralPath $File).Path
 
+# Guard against accidentally uploading the newest unrelated download under the
+# selected add-on slug. This is only a filename plausibility check; the CT still
+# performs the authoritative archive/manifest validation.
+$namePatterns = @{
+    'bedrock-essentials'    = 'essential'
+    'advanced-gravestone'  = 'gravestone'
+    'lilium-dynamic-light' = 'lilium|dynamic[ ._-]*light'
+    'epic-machinery'       = 'machin'
+    'better-on-bedrock'    = 'better[ ._-]*(on[ ._-]*)?bedrock'
+}
+$leaf = [IO.Path]::GetFileName($File)
+if ($namePatterns.ContainsKey($Slug) -and $leaf -notmatch $namePatterns[$Slug]) {
+    $ans = Read-Host "WARNUNG: '$leaf' passt vom Dateinamen nicht zu '$Slug'. Trotzdem hochladen? [y/N]"
+    if ($ans -notmatch '^(y|yes|j|ja)
+Invoke-RestMethod -Uri "$ServerUrl/health" -Method Get -TimeoutSec 5 | Out-Null
+Write-Host 'OK'
+Write-Host "Lade $([IO.Path]::GetFileName($File)) als $Slug hoch. Der CT übernimmt Backup, Validierung, Installation und Test."
+$headers = @{ Authorization = "Bearer $UploadToken" }
+$result = Invoke-RestMethod -Uri "$ServerUrl/upload/$Slug" -Method Put -Headers $headers -InFile $File -ContentType 'application/octet-stream' -TimeoutSec 360
+$result | ConvertTo-Json -Depth 5
+) {
+        throw 'Upload wegen möglicher Add-on-Verwechslung abgebrochen.'
+    }
+}
+
 Write-Host -NoNewline 'Prüfe Upload-Dienst … '
 Invoke-RestMethod -Uri "$ServerUrl/health" -Method Get -TimeoutSec 5 | Out-Null
 Write-Host 'OK'
