@@ -173,6 +173,7 @@ online-mode=true
 allow-list=$ALLOWLIST_BOOL
 server-port=$PORT4
 server-portv6=$PORT6
+transport=nethernet
 enable-lan-visibility=true
 view-distance=$VIEW_DISTANCE
 tick-distance=$TICK_DISTANCE
@@ -472,17 +473,17 @@ for ((i=0;i<wait_s;i++)); do
   if ! systemctl is-active --quiet minecraft-bedrock.service; then
     echo "Service ist nicht aktiv." >&2; journalctl -u minecraft-bedrock.service -n 80 --no-pager >&2 || true; exit 1
   fi
-  if ss -lunp 2>/dev/null | grep -Eq ":${PORT4}([[:space:]]|$)"; then break; fi
+  if ss -lntup 2>/dev/null | grep -Eq ":${PORT4}([[:space:]]|$)"; then break; fi
   sleep 1
 done
-ss -lunp 2>/dev/null | grep -Eq ":${PORT4}([[:space:]]|$)" || { echo "UDP $PORT4 lauscht nicht." >&2; journalctl -u minecraft-bedrock.service -n 100 --no-pager >&2; exit 1; }
+ss -lntup 2>/dev/null | grep -Eq ":${PORT4}([[:space:]]|$)" || { echo "Gameplay-Port $PORT4 lauscht nicht." >&2; journalctl -u minecraft-bedrock.service -n 100 --no-pager >&2; exit 1; }
 logs="$(journalctl -u minecraft-bedrock.service --since '-3 minutes' --no-pager 2>/dev/null || true)"
-if grep -Eqi '(configured pack.*not found|unable to load.*pack|failed to load.*pack|requires a newer version|syntaxerror|unhandledpromiserejection|resourceprocessingerror|fatal error|server shutdown unexpectedly)' <<<"$logs"; then
+if grep -Eqi '(configured pack.*not found|unable to load.*pack|failed to load.*pack|requires a newer version|syntaxerror|unhandledpromiserejection|resourceprocessingerror|transport type error|players will not be able to connect|fatal error|server shutdown unexpectedly)' <<<"$logs"; then
   echo "Fatales Add-on/BDS-Muster im aktuellen Journal gefunden:" >&2
-  grep -Ei '(configured pack.*not found|unable to load.*pack|failed to load.*pack|requires a newer version|syntaxerror|unhandledpromiserejection|resourceprocessingerror|fatal error|server shutdown unexpectedly)' <<<"$logs" >&2 || true
+  grep -Ei '(configured pack.*not found|unable to load.*pack|failed to load.*pack|requires a newer version|syntaxerror|unhandledpromiserejection|resourceprocessingerror|transport type error|players will not be able to connect|fatal error|server shutdown unexpectedly)' <<<"$logs" >&2 || true
   exit 1
 fi
-echo "OK: minecraft-bedrock aktiv; UDP $PORT4 lauscht; kein bekanntes fatales Pack-Muster im frischen Journal."
+echo "OK: minecraft-bedrock aktiv; Gameplay-Port $PORT4 lauscht; kein bekanntes fatales Pack-Muster im frischen Journal."
 SH
 chmod 0755 /usr/local/sbin/mc-bedrock-test
 
